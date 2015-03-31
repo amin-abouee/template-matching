@@ -1,0 +1,41 @@
+# relase binary folder
+set(CMAKE_RELEASE_DIR "../bin/release")
+# debug binary folder
+set(CMAKE_DEBUG_DIR "../bin/debug")
+
+find_package( OpenCV REQUIRED )
+find_package( Qt4 REQUIRED )
+
+set(template_matching_SOURCES
+	main.cpp
+	templatematchingui.cpp
+	templatematchingopencv.cpp)
+
+set(template_matching_HEADERS 
+	templatematchingui.h 
+	templatematchingopencv.h)
+
+set(template_matching_FORMS 
+	../ui/templatematchingui.ui)
+
+QT4_WRAP_CPP(template_matching_HEADERS_MOC ${template_matching_HEADERS})
+QT4_WRAP_UI(template_matching_FORMS_HEADERS ${template_matching_FORMS})
+
+include(${QT_USE_FILE})
+add_definitions(${QT_DEFINITIONS})
+
+add_executable (template_matching 
+	${template_matching_SOURCES} 
+	${template_matching_HEADERS_MOC} 
+	${template_matching_FORMS_HEADERS})
+
+target_link_libraries (template_matching 
+	${OpenCV_LIBS} 
+	${QT_LIBRARIES})
+
+if(CMAKE_BUILD_TYPE STREQUAL Debug)
+	set_target_properties(template_matching PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_DEBUG_DIR})
+	set_target_properties(template_matching PROPERTIES OUTPUT_NAME template_matching${BUILD_PREFIX})
+else()
+	set_target_properties(template_matching PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RELEASE_DIR})
+endif()
