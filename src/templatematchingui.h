@@ -34,8 +34,8 @@ private:
     QGraphicsView *graphicsViewRightImage;
     QGraphicsScene *graphicSceneLeftImage;
     QGraphicsScene *graphicSceneRightImage;
-    QPixmap leftImage;
-    QPixmap rightImage;
+    // QPixmap leftImage;
+    // QPixmap rightImage;
     QGraphicsPixmapItem *leftPixmap;
     QGraphicsPixmapItem *rightPixmap;
     QGraphicsRectItem *leftPatch;

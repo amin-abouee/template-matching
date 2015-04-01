@@ -11,21 +11,24 @@
 #include <QtCore/QDebug>
 
 #include <iostream>
+#include <algorithm>
 
 class TemplateMatchingOpenCV
 {
 public:
-    TemplateMatchingOpenCV();
+    TemplateMatchingOpenCV(int iPatchSize);
     ~TemplateMatchingOpenCV();
     void setLeftImage(const QPixmap &image);
     void setRightImage(const QPixmap &image);
+    void setPatchSize(int iPatchSize);
     QPointF findCorrespondingTemplate(QPointF selectedPoint);
 
 private:
+	std::size_t patchSize;
     cv::Mat leftImage;
     cv::Mat rightImage;
     cv::Mat qImage2CvMat(const QPixmap &image);
-    cv::Mat selectPatchImage (cv::Mat &referenceImage, cv::Point &selectedPoint, int margin);
+    std::pair<cv::Mat, cv::Point> selectPatchImage (cv::Mat &referenceImage, cv::Point &centerPoint, int margin);
 };
 
 #endif // TEMPLATEMATCHINGOPENCV_H

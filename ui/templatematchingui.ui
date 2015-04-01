@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>617</height>
+    <width>1290</width>
+    <height>687</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,26 +18,26 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>370</width>
-     <height>555</height>
+     <width>600</width>
+     <height>600</height>
     </rect>
    </property>
   </widget>
   <widget class="QGraphicsView" name="graphicsViewRightImage">
    <property name="geometry">
     <rect>
-     <x>420</x>
+     <x>630</x>
      <y>10</y>
-     <width>370</width>
-     <height>555</height>
+     <width>600</width>
+     <height>600</height>
     </rect>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButtonLeftImage">
    <property name="geometry">
     <rect>
-     <x>110</x>
-     <y>570</y>
+     <x>230</x>
+     <y>610</y>
      <width>170</width>
      <height>32</height>
     </rect>
@@ -49,8 +49,8 @@
   <widget class="QPushButton" name="pushButtonRightImage">
    <property name="geometry">
     <rect>
-     <x>530</x>
-     <y>570</y>
+     <x>880</x>
+     <y>610</y>
      <width>170</width>
      <height>32</height>
     </rect>
@@ -59,6 +59,54 @@
     <string>Load Right Image</string>
    </property>
   </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>650</y>
+     <width>391</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="QLabel" name="labelPatchSizeText">
+      <property name="text">
+       <string>Patch Size</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QSlider" name="horizontalSliderPatchSize">
+        <property name="minimum">
+         <number>10</number>
+        </property>
+        <property name="value">
+         <number>20</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelPatchSize">
+        <property name="text">
+         <string>20</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <zorder>layoutWidget</zorder>
+  <zorder>graphicsViewLeftImage</zorder>
+  <zorder>graphicsViewRightImage</zorder>
+  <zorder>pushButtonLeftImage</zorder>
+  <zorder>pushButtonRightImage</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

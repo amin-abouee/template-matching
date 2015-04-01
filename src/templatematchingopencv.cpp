@@ -1,6 +1,7 @@
 #include "templatematchingopencv.h"
 
-TemplateMatchingOpenCV::TemplateMatchingOpenCV()
+TemplateMatchingOpenCV::TemplateMatchingOpenCV(int iPatchSize):
+patchSize(iPatchSize)
 {
 
 }
@@ -10,48 +11,49 @@ TemplateMatchingOpenCV::~TemplateMatchingOpenCV()
 
 }
 
+void TemplateMatchingOpenCV::setPatchSize(int iPatchSize)
+{
+	patchSize = iPatchSize;
+}
+
 void TemplateMatchingOpenCV::setLeftImage(const QPixmap &image)
 {
 	leftImage = qImage2CvMat(image);
-	// leftImage = cv::imread("/Users/Abouee/Desktop/IMG_4934_resize.jpg");
-	// cv::imshow("Left", leftImage);
 }
 
 void TemplateMatchingOpenCV::setRightImage(const QPixmap &image)
 {
 	rightImage = qImage2CvMat(image);
-	// rightImage = cv::imread("/Users/Abouee/Desktop/IMG_4936_resize.jpg");
-	// cv::imshow("Right", rightImage);
 }
 
 cv::Mat TemplateMatchingOpenCV::qImage2CvMat(const QPixmap &image)
 {
 	const QImage qImage = image.toImage();
-	// qDebug() << qImage.height() << " -- " << qImage.width();
 	cv::Mat temp = cv::Mat(qImage.height(), qImage.width(), CV_8UC4, 
                    const_cast<uchar*>(qImage.bits()), 
                    qImage.bytesPerLine()).clone();
 	cv::Mat result;
-	cvtColor(temp, result, 1);
-	// std::cout << result.rows << " // " << result.cols << std::endl;
+	cvtColor(temp, result, cv::COLOR_BGRA2BGR);
+	// cvtColor(result,result,cv::COLOR_RGB2GRAY);
 	return result;
 }
 
 QPointF TemplateMatchingOpenCV::findCorrespondingTemplate(QPointF selectedPoint)
 {
 	cv::Point centerPoint (selectedPoint.x(), selectedPoint.y());
-	int margin = 20;
-	cv::Mat subImage = selectPatchImage(leftImage, centerPoint, margin);
-	// std::cout << "Sub Image: " << subImage.rows << " - " << subImage.cols << std::endl;
-	// std::cout << "right Image: " << rightImage.rows << " - " << rightImage.cols << std::endl;
+	std::pair <cv::Mat, cv::Point> referencePatch = selectPatchImage(leftImage, centerPoint, patchSize);
+	std::pair <cv::Mat, cv::Point> followingPatch = selectPatchImage(rightImage, centerPoint, patchSize * 20);
+	cv::Mat subImage = referencePatch.first;
+	cv::Mat searchImage = followingPatch.first;
+	// cv::imshow("SEARCH", searchImage);
 
 	cv::Size resultSize;
-	resultSize.width =  rightImage.cols - subImage.cols + 1;
-	resultSize.height = rightImage.rows - subImage.rows + 1;
-	std::cout << resultSize << std::endl;
+	resultSize.width =  searchImage.cols - subImage.cols + 1;
+	resultSize.height = searchImage.rows - subImage.rows + 1;
+	// std::cout << resultSize << std::endl;
 
 	cv::Mat result = cv::Mat(resultSize,  CV_32FC1);
-	cv::matchTemplate (subImage, rightImage, result, cv::TM_CCORR_NORMED);
+	cv::matchTemplate (subImage, searchImage, result, cv::TM_CCORR_NORMED);
 	cv::normalize (result, result, 0, 1, cv::NORM_MINMAX, -1, cv::Mat());
 	double minVal; 
 	double maxVal; 
@@ -60,14 +62,36 @@ QPointF TemplateMatchingOpenCV::findCorrespondingTemplate(QPointF selectedPoint)
 	cv::Point bestLoc;
 	cv::minMaxLoc (result, &minVal, &maxVal, &minLocation, &maxLocation, cv::Mat());
 	bestLoc = maxLocation;
-	return QPointF(bestLoc.x, bestLoc.y);
+	return QPointF(bestLoc.x + followingPatch.second.x, bestLoc.y + followingPatch.second.y);
 }
 
-cv::Mat TemplateMatchingOpenCV::selectPatchImage (cv::Mat &referenceImage, cv::Point &selectedPoint, int margin)
+std::pair<cv::Mat, cv::Point> TemplateMatchingOpenCV::selectPatchImage (cv::Mat &referenceImage, cv::Point &centerPoint, int margin)
 {
-	std::size_t patchSize = margin / 2;
-	cv::Point upperLeftCorner (selectedPoint.x - margin, selectedPoint.y - margin);
-	cv::Rect patch (upperLeftCorner.x, upperLeftCorner.y, margin, margin);
+	std::pair <cv::Mat, cv::Point> result;
+	// std::cout << "Patch Size: " << margin << std::endl;
+	std::size_t halfPatchSize = margin / 2;
+	
+	int leftSideLoc = std::max(0, int(centerPoint.x - halfPatchSize));
+	// std::cout << "left side: " << leftSideLoc << std::endl;
+
+	int upSideLoc = std::max(0, int(centerPoint.y - halfPatchSize));
+	// std::cout << "up side: " << upSideLoc << std::endl;
+	cv::Point upperLeftCorner (leftSideLoc, upSideLoc);
+
+	int rightSide = std::min(int(upperLeftCorner.x + margin), int(referenceImage.cols));
+	// std::cout << "right side: " << rightSide << std::endl;
+
+	int downSide = std::min(int(upperLeftCorner.y + margin), int(referenceImage.rows));
+	// std::cout << "down side: " << downSide << std::endl;
+
+	int width = rightSide - upperLeftCorner.x;
+	// std::cout << "width: " << width << std::endl;
+	int height = downSide - upperLeftCorner.y;
+	// std::cout << "height: " << height << std::endl;
+
+	cv::Rect patch (upperLeftCorner.x, upperLeftCorner.y, width, height);
 	cv::Mat patchImage = referenceImage(patch);
-	return patchImage;
+	result.first = patchImage;
+	result.second = upperLeftCorner;
+	return result;
 }
