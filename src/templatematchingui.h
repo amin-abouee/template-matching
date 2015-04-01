@@ -6,6 +6,8 @@
 #include <QtGui/QtGui>
 #include <QtCore/QDebug>
 
+#include "templatematchingopencv.h"
+
 namespace Ui {
 class TemplateMatchingUI;
 }
@@ -36,6 +38,9 @@ private:
     QPixmap rightImage;
     QGraphicsPixmapItem *leftPixmap;
     QGraphicsPixmapItem *rightPixmap;
+    QGraphicsRectItem *leftPatch;
+    QGraphicsRectItem *rightPatch;
+    TemplateMatchingOpenCV activeThread; 
 };
 
 #endif // TEMPLATEMATCHINGUI_H
