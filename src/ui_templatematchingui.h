@@ -42,7 +42,7 @@ public:
     {
         if (TemplateMatchingUI->objectName().isEmpty())
             TemplateMatchingUI->setObjectName(QString::fromUtf8("TemplateMatchingUI"));
-        TemplateMatchingUI->resize(1280, 687);
+        TemplateMatchingUI->resize(1244, 687);
         graphicsViewLeftImage = new QGraphicsView(TemplateMatchingUI);
         graphicsViewLeftImage->setObjectName(QString::fromUtf8("graphicsViewLeftImage"));
         graphicsViewLeftImage->setGeometry(QRect(10, 10, 600, 600));
@@ -100,7 +100,7 @@ public:
 
     void retranslateUi(QDialog *TemplateMatchingUI)
     {
-        TemplateMatchingUI->setWindowTitle(QApplication::translate("TemplateMatchingUI", "TemplateMatchingUI", 0, QApplication::UnicodeUTF8));
+        TemplateMatchingUI->setWindowTitle(QApplication::translate("TemplateMatchingUI", "Template Matching", 0, QApplication::UnicodeUTF8));
         pushButtonLeftImage->setText(QApplication::translate("TemplateMatchingUI", "Load Left Image", 0, QApplication::UnicodeUTF8));
         pushButtonRightImage->setText(QApplication::translate("TemplateMatchingUI", "Load Right Image", 0, QApplication::UnicodeUTF8));
         labelPatchSizeText->setText(QApplication::translate("TemplateMatchingUI", "Patch Size", 0, QApplication::UnicodeUTF8));

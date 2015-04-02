@@ -9,20 +9,21 @@ TemplateMatchingUI::TemplateMatchingUI(QWidget *parent) :
     rightPixmap(NULL),
     leftPatch(NULL),
     rightPatch(NULL),
-    templateMatcher(20)
+    initilPatchSize(20),
+    padSizeGraphicScene(10),
+    padSizeGraphicView(1),
+    graphicSceneLeftImage(new QGraphicsScene(this)),
+    graphicSceneRightImage(new QGraphicsScene(this)),
+    templateMatcher(initilPatchSize)
 {
     ui->setupUi(this);
-    graphicSceneLeftImage = new QGraphicsScene(this);
-    graphicSceneRightImage = new QGraphicsScene(this);
     ui->graphicsViewLeftImage->setScene(graphicSceneLeftImage);
     ui->graphicsViewLeftImage->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsViewLeftImage->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
     ui->graphicsViewRightImage->setScene(graphicSceneRightImage);
     ui->graphicsViewRightImage->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsViewRightImage->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-    ui->horizontalSliderPatchSize->setValue(20);
+    ui->horizontalSliderPatchSize->setValue(initilPatchSize);
     connect(ui->horizontalSliderPatchSize, SIGNAL(valueChanged(int)) , ui->labelPatchSize, SLOT(setNum(int)));
 }
 
@@ -33,8 +34,11 @@ TemplateMatchingUI::~TemplateMatchingUI()
 
 void TemplateMatchingUI::on_pushButtonLeftImage_clicked()
 {
+    // clear the left graphic scene and left patch indicator
     graphicSceneLeftImage->clear();
     leftPatch = NULL;
+
+    // read the file path of left image and load the image inside the Qimage image var
     QString leftFileName = QFileDialog::getOpenFileName(this,
                            tr("Open File"), QDir::currentPath());
     if (!leftFileName.isEmpty()) {
@@ -46,8 +50,10 @@ void TemplateMatchingUI::on_pushButtonLeftImage_clicked()
         }
         int width = ui->graphicsViewLeftImage->size().width();
         int heigth = ui->graphicsViewLeftImage->size().height();
+        // convert the Qimage to Qpixmap for pushing inside the left graphic scene
         QPixmap leftImage = QPixmap::fromImage(image);
-        leftPixmap = graphicSceneLeftImage->addPixmap(leftImage.scaled(width - 10, heigth - 10, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        leftPixmap = graphicSceneLeftImage->addPixmap(leftImage.scaled(width - padSizeGraphicScene, heigth - padSizeGraphicScene, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        // set the left image in templateMatcher object to use in OpenCV. The data should be converted from Pixmap to cv::Mat !
         templateMatcher.setLeftImage(leftPixmap->pixmap());
     }
 }
@@ -68,33 +74,40 @@ void TemplateMatchingUI::on_pushButtonRightImage_clicked()
         int width = ui->graphicsViewRightImage->size().width();
         int heigth = ui->graphicsViewRightImage->size().height();
         QPixmap rightImage = QPixmap::fromImage(image);
-        rightPixmap = graphicSceneRightImage->addPixmap(rightImage.scaled(width - 10, heigth - 10, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        rightPixmap = graphicSceneRightImage->addPixmap(rightImage.scaled(width - padSizeGraphicScene, heigth - padSizeGraphicScene, Qt::KeepAspectRatio, Qt::SmoothTransformation));
         templateMatcher.setRightImage(rightPixmap->pixmap());
     }
 }
 
 void TemplateMatchingUI::mousePressEvent(QMouseEvent * event)
 {
+    // check the both left and right images. Their values should be filled already by the image data
     if (leftPixmap != NULL && rightPixmap != NULL)
     {
+        // remove the left and right rectangles indicator
         removeRectItemsFromScene();
+
+        // read the position of mouse click from the input event and also the patch size around the each selected point.
         std::size_t patchSize = ui->horizontalSliderPatchSize->value();
         QPointF selectedPoint = ui->graphicsViewLeftImage->mapToScene(event->pos());
-        selectedPoint.setX(selectedPoint.x() - ui->graphicsViewLeftImage->geometry().x() - 1);
-        selectedPoint.setY(selectedPoint.y() - ui->graphicsViewLeftImage->geometry().y() - 1);
+        // compute the accurate location of mouse relative to the left graphic view
+        selectedPoint.setX(selectedPoint.x() - ui->graphicsViewLeftImage->geometry().x() - padSizeGraphicView);
+        selectedPoint.setY(selectedPoint.y() - ui->graphicsViewLeftImage->geometry().y() - padSizeGraphicView);
 
+        // check the boundary of mouse click. It should be located inside the left image border
         if (selectedPoint.x() >= 0 && selectedPoint.x() <= leftPixmap->pixmap().width() &&
                 selectedPoint.y() >= 0 && selectedPoint.y() <= rightPixmap->pixmap().height())
         {
-            // qDebug() << "Selected Point: " << selectedPoint;
+            // draw a blue rectangle around the selected patch.
             QPen bluePen = QPen(Qt::blue);
             QRect referenceRect(selectedPoint.x() - patchSize / 2, selectedPoint.y() - patchSize / 2, patchSize, patchSize);
             leftPatch = graphicSceneLeftImage->addRect(referenceRect, bluePen);
 
+            // set the patch size and find the corresponding template (patch) in the following image
             templateMatcher.setPatchSize(patchSize);
             QPointF final = templateMatcher.findCorrespondingTemplate(selectedPoint);
 
-            // qDebug() << "Final Point: " << final;
+            // draw a green rectangles around the computed patch in the right side
             QPen greenPen = QPen(Qt::green);
             QRect followingRect(final.x(), final.y(), patchSize, patchSize);
             rightPatch = graphicSceneRightImage->addRect(followingRect, greenPen);
