@@ -50,10 +50,10 @@ private:
     QGraphicsPixmapItem *rightPixmap; /**< Pointer to the right pixmap (right image) inside the right graphic scene */
     QGraphicsRectItem *leftPatch; /**< Pointer to the left rect (blue rectangle around the selected patch) inside the left graphic scene */
     QGraphicsRectItem *rightPatch; /**< Pointer to the right rect (green rectangle around the selected patch) inside the right graphic scene */
-    TemplateMatchingOpenCV templateMatcher; /**< Object of TemplateMatchingOpenCV class for finding the corresponding template by using the OpenCV implementation */
     int initilPatchSize; /**< The initial value for patch size */
     const int padSizeGraphicScene; /**< The pad size between the each graphicness and its image */
     const int padSizeGraphicView; /**< The pad size between the graphic view and mouse click */
+    TemplateMatchingOpenCV templateMatcher; /**< Object of TemplateMatchingOpenCV class for finding the corresponding template by using the OpenCV implementation */
 
     /**
      * @brief Remove the both left and right rectangles indicator around the selected patches

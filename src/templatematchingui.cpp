@@ -5,6 +5,8 @@
 TemplateMatchingUI::TemplateMatchingUI(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::TemplateMatchingUI),
+    graphicSceneLeftImage(new QGraphicsScene(this)),
+    graphicSceneRightImage(new QGraphicsScene(this)),
     leftPixmap(NULL),
     rightPixmap(NULL),
     leftPatch(NULL),
@@ -12,8 +14,6 @@ TemplateMatchingUI::TemplateMatchingUI(QWidget *parent) :
     initilPatchSize(20),
     padSizeGraphicScene(10),
     padSizeGraphicView(1),
-    graphicSceneLeftImage(new QGraphicsScene(this)),
-    graphicSceneRightImage(new QGraphicsScene(this)),
     templateMatcher(initilPatchSize)
 {
     ui->setupUi(this);
@@ -53,7 +53,7 @@ void TemplateMatchingUI::on_pushButtonLeftImage_clicked()
         // convert the Qimage to Qpixmap for pushing inside the left graphic scene
         QPixmap leftImage = QPixmap::fromImage(image);
         leftPixmap = graphicSceneLeftImage->addPixmap(leftImage.scaled(width - padSizeGraphicScene, heigth - padSizeGraphicScene, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-        // set the left image in templateMatcher object to use in OpenCV. The data should be converted from Pixmap to cv::Mat !
+        // set the left image in templateMatcher object to use in OpenCV. The data should be converted from Qt:: to cv::Mat !
         templateMatcher.setLeftImage(leftPixmap->pixmap());
     }
 }
