@@ -42,7 +42,7 @@ QPointF TemplateMatchingOpenCV::findCorrespondingTemplate(QPointF selectedPoint)
 {
 	cv::Point centerPoint (selectedPoint.x(), selectedPoint.y());
 	std::pair <cv::Mat, cv::Point> referencePatch = selectPatchImage(leftImage, centerPoint, patchSize);
-	std::pair <cv::Mat, cv::Point> followingPatch = selectPatchImage(rightImage, centerPoint, patchSize * 20);
+	std::pair <cv::Mat, cv::Point> followingPatch = selectPatchImage(rightImage, centerPoint, patchSize * 30);
 	cv::Mat subImage = referencePatch.first;
 	cv::Mat searchImage = followingPatch.first;
 	// cv::imshow("SEARCH", searchImage);

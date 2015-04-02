@@ -24,23 +24,23 @@ TemplateMatchingUI::TemplateMatchingUI(QWidget *parent) :
 
     ui->horizontalSliderPatchSize->setValue(20);
     connect(ui->horizontalSliderPatchSize, SIGNAL(valueChanged(int)) , ui->labelPatchSize, SLOT(setNum(int)));
-    {
-        int width = ui->graphicsViewLeftImage->size().width();
-        int heigth = ui->graphicsViewLeftImage->size().height();
-        QImage image("/Users/Abouee/Desktop/IMG_4936_resize.jpg");
-        QPixmap leftImage = QPixmap::fromImage(image);
-        leftPixmap = graphicSceneLeftImage->addPixmap(leftImage.scaled(width - 10, heigth - 10, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-        activeThread.setLeftImage(leftPixmap->pixmap());
-    }
+    // {
+    //     int width = ui->graphicsViewLeftImage->size().width();
+    //     int heigth = ui->graphicsViewLeftImage->size().height();
+    //     QImage image("/Users/Abouee/Desktop/IMG_4936_resize.jpg");
+    //     QPixmap leftImage = QPixmap::fromImage(image);
+    //     leftPixmap = graphicSceneLeftImage->addPixmap(leftImage.scaled(width - 10, heigth - 10, Qt::KeepAspectRatio));
+    //     activeThread.setLeftImage(leftPixmap->pixmap());
+    // }
 
-    {
-        int width = ui->graphicsViewRightImage->size().width();
-        int heigth = ui->graphicsViewRightImage->size().height();
-        QImage image("/Users/Abouee/Desktop/IMG_4934_resize.jpg");
-        QPixmap rightImage = QPixmap::fromImage(image);
-        rightPixmap = graphicSceneRightImage->addPixmap(rightImage.scaled(width - 10, heigth - 10, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-        activeThread.setRightImage(rightPixmap->pixmap());
-    }
+    // {
+    //     int width = ui->graphicsViewRightImage->size().width();
+    //     int heigth = ui->graphicsViewRightImage->size().height();
+    //     QImage image("/Users/Abouee/Desktop/IMG_4934_resize.jpg");
+    //     QPixmap rightImage = QPixmap::fromImage(image);
+    //     rightPixmap = graphicSceneRightImage->addPixmap(rightImage.scaled(width - 10, heigth - 10, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    //     activeThread.setRightImage(rightPixmap->pixmap());
+    // }
 
 }
 
@@ -52,6 +52,7 @@ TemplateMatchingUI::~TemplateMatchingUI()
 void TemplateMatchingUI::on_pushButtonLeftImage_clicked()
 {
     graphicSceneLeftImage->clear();
+    leftPatch = NULL;
     QString leftFileName = QFileDialog::getOpenFileName(this,
                            tr("Open File"), QDir::currentPath());
     if (!leftFileName.isEmpty()) {
@@ -72,6 +73,7 @@ void TemplateMatchingUI::on_pushButtonLeftImage_clicked()
 void TemplateMatchingUI::on_pushButtonRightImage_clicked()
 {
     graphicSceneRightImage->clear();
+    rightPatch = NULL;
     QString rightFileName = QFileDialog::getOpenFileName(this,
                             tr("Open File"), QDir::currentPath());
     if (!rightFileName.isEmpty()) {
@@ -125,11 +127,6 @@ void TemplateMatchingUI::mousePressEvent(QMouseEvent * event)
             QPen greenPen = QPen(Qt::green);
             QRect followingRect(final.x(), final.y(), patchSize, patchSize);
             rightPatch = graphicSceneRightImage->addRect(followingRect, greenPen);
-        }
-
-        else
-        {
-            std::cout << "BANG" << std::endl;
         }
     }
     else

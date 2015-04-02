@@ -31,7 +31,7 @@ public:
     QGraphicsView *graphicsViewRightImage;
     QPushButton *pushButtonLeftImage;
     QPushButton *pushButtonRightImage;
-    QWidget *widget;
+    QWidget *layoutWidget;
     QHBoxLayout *horizontalLayout_2;
     QLabel *labelPatchSizeText;
     QHBoxLayout *horizontalLayout;
@@ -42,28 +42,28 @@ public:
     {
         if (TemplateMatchingUI->objectName().isEmpty())
             TemplateMatchingUI->setObjectName(QString::fromUtf8("TemplateMatchingUI"));
-        TemplateMatchingUI->resize(800, 662);
+        TemplateMatchingUI->resize(1290, 687);
         graphicsViewLeftImage = new QGraphicsView(TemplateMatchingUI);
         graphicsViewLeftImage->setObjectName(QString::fromUtf8("graphicsViewLeftImage"));
-        graphicsViewLeftImage->setGeometry(QRect(10, 10, 370, 555));
+        graphicsViewLeftImage->setGeometry(QRect(10, 10, 600, 600));
         graphicsViewRightImage = new QGraphicsView(TemplateMatchingUI);
         graphicsViewRightImage->setObjectName(QString::fromUtf8("graphicsViewRightImage"));
-        graphicsViewRightImage->setGeometry(QRect(420, 10, 370, 555));
+        graphicsViewRightImage->setGeometry(QRect(630, 10, 600, 600));
         pushButtonLeftImage = new QPushButton(TemplateMatchingUI);
         pushButtonLeftImage->setObjectName(QString::fromUtf8("pushButtonLeftImage"));
-        pushButtonLeftImage->setGeometry(QRect(110, 570, 170, 32));
+        pushButtonLeftImage->setGeometry(QRect(230, 610, 170, 32));
         pushButtonRightImage = new QPushButton(TemplateMatchingUI);
         pushButtonRightImage->setObjectName(QString::fromUtf8("pushButtonRightImage"));
-        pushButtonRightImage->setGeometry(QRect(530, 570, 170, 32));
-        widget = new QWidget(TemplateMatchingUI);
-        widget->setObjectName(QString::fromUtf8("widget"));
-        widget->setGeometry(QRect(200, 620, 391, 26));
-        horizontalLayout_2 = new QHBoxLayout(widget);
+        pushButtonRightImage->setGeometry(QRect(880, 610, 170, 32));
+        layoutWidget = new QWidget(TemplateMatchingUI);
+        layoutWidget->setObjectName(QString::fromUtf8("layoutWidget"));
+        layoutWidget->setGeometry(QRect(350, 650, 391, 26));
+        horizontalLayout_2 = new QHBoxLayout(layoutWidget);
         horizontalLayout_2->setSpacing(6);
         horizontalLayout_2->setContentsMargins(11, 11, 11, 11);
         horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
         horizontalLayout_2->setContentsMargins(0, 0, 0, 0);
-        labelPatchSizeText = new QLabel(widget);
+        labelPatchSizeText = new QLabel(layoutWidget);
         labelPatchSizeText->setObjectName(QString::fromUtf8("labelPatchSizeText"));
 
         horizontalLayout_2->addWidget(labelPatchSizeText);
@@ -71,7 +71,7 @@ public:
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(6);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-        horizontalSliderPatchSize = new QSlider(widget);
+        horizontalSliderPatchSize = new QSlider(layoutWidget);
         horizontalSliderPatchSize->setObjectName(QString::fromUtf8("horizontalSliderPatchSize"));
         horizontalSliderPatchSize->setMinimum(10);
         horizontalSliderPatchSize->setValue(20);
@@ -79,7 +79,7 @@ public:
 
         horizontalLayout->addWidget(horizontalSliderPatchSize);
 
-        labelPatchSize = new QLabel(widget);
+        labelPatchSize = new QLabel(layoutWidget);
         labelPatchSize->setObjectName(QString::fromUtf8("labelPatchSize"));
 
         horizontalLayout->addWidget(labelPatchSize);
@@ -87,12 +87,11 @@ public:
 
         horizontalLayout_2->addLayout(horizontalLayout);
 
+        layoutWidget->raise();
         graphicsViewLeftImage->raise();
         graphicsViewRightImage->raise();
         pushButtonLeftImage->raise();
         pushButtonRightImage->raise();
-        labelPatchSize->raise();
-        horizontalSliderPatchSize->raise();
 
         retranslateUi(TemplateMatchingUI);
 
