@@ -42,7 +42,7 @@ public:
     {
         if (TemplateMatchingUI->objectName().isEmpty())
             TemplateMatchingUI->setObjectName(QString::fromUtf8("TemplateMatchingUI"));
-        TemplateMatchingUI->resize(1290, 687);
+        TemplateMatchingUI->resize(1280, 687);
         graphicsViewLeftImage = new QGraphicsView(TemplateMatchingUI);
         graphicsViewLeftImage->setObjectName(QString::fromUtf8("graphicsViewLeftImage"));
         graphicsViewLeftImage->setGeometry(QRect(10, 10, 600, 600));
@@ -51,13 +51,13 @@ public:
         graphicsViewRightImage->setGeometry(QRect(630, 10, 600, 600));
         pushButtonLeftImage = new QPushButton(TemplateMatchingUI);
         pushButtonLeftImage->setObjectName(QString::fromUtf8("pushButtonLeftImage"));
-        pushButtonLeftImage->setGeometry(QRect(230, 610, 170, 32));
+        pushButtonLeftImage->setGeometry(QRect(230, 620, 170, 32));
         pushButtonRightImage = new QPushButton(TemplateMatchingUI);
         pushButtonRightImage->setObjectName(QString::fromUtf8("pushButtonRightImage"));
-        pushButtonRightImage->setGeometry(QRect(880, 610, 170, 32));
+        pushButtonRightImage->setGeometry(QRect(880, 620, 170, 32));
         layoutWidget = new QWidget(TemplateMatchingUI);
         layoutWidget->setObjectName(QString::fromUtf8("layoutWidget"));
-        layoutWidget->setGeometry(QRect(350, 650, 391, 26));
+        layoutWidget->setGeometry(QRect(420, 660, 391, 26));
         horizontalLayout_2 = new QHBoxLayout(layoutWidget);
         horizontalLayout_2->setSpacing(6);
         horizontalLayout_2->setContentsMargins(11, 11, 11, 11);

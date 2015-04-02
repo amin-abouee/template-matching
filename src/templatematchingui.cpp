@@ -9,7 +9,7 @@ TemplateMatchingUI::TemplateMatchingUI(QWidget *parent) :
     rightPixmap(NULL),
     leftPatch(NULL),
     rightPatch(NULL),
-    activeThread(20)
+    templateMatcher(20)
 {
     ui->setupUi(this);
     graphicSceneLeftImage = new QGraphicsScene(this);
@@ -24,24 +24,6 @@ TemplateMatchingUI::TemplateMatchingUI(QWidget *parent) :
 
     ui->horizontalSliderPatchSize->setValue(20);
     connect(ui->horizontalSliderPatchSize, SIGNAL(valueChanged(int)) , ui->labelPatchSize, SLOT(setNum(int)));
-    // {
-    //     int width = ui->graphicsViewLeftImage->size().width();
-    //     int heigth = ui->graphicsViewLeftImage->size().height();
-    //     QImage image("/Users/Abouee/Desktop/IMG_4936_resize.jpg");
-    //     QPixmap leftImage = QPixmap::fromImage(image);
-    //     leftPixmap = graphicSceneLeftImage->addPixmap(leftImage.scaled(width - 10, heigth - 10, Qt::KeepAspectRatio));
-    //     activeThread.setLeftImage(leftPixmap->pixmap());
-    // }
-
-    // {
-    //     int width = ui->graphicsViewRightImage->size().width();
-    //     int heigth = ui->graphicsViewRightImage->size().height();
-    //     QImage image("/Users/Abouee/Desktop/IMG_4934_resize.jpg");
-    //     QPixmap rightImage = QPixmap::fromImage(image);
-    //     rightPixmap = graphicSceneRightImage->addPixmap(rightImage.scaled(width - 10, heigth - 10, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    //     activeThread.setRightImage(rightPixmap->pixmap());
-    // }
-
 }
 
 TemplateMatchingUI::~TemplateMatchingUI()
@@ -66,7 +48,7 @@ void TemplateMatchingUI::on_pushButtonLeftImage_clicked()
         int heigth = ui->graphicsViewLeftImage->size().height();
         QPixmap leftImage = QPixmap::fromImage(image);
         leftPixmap = graphicSceneLeftImage->addPixmap(leftImage.scaled(width - 10, heigth - 10, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-        activeThread.setLeftImage(leftPixmap->pixmap());
+        templateMatcher.setLeftImage(leftPixmap->pixmap());
     }
 }
 
@@ -87,7 +69,7 @@ void TemplateMatchingUI::on_pushButtonRightImage_clicked()
         int heigth = ui->graphicsViewRightImage->size().height();
         QPixmap rightImage = QPixmap::fromImage(image);
         rightPixmap = graphicSceneRightImage->addPixmap(rightImage.scaled(width - 10, heigth - 10, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-        activeThread.setRightImage(rightPixmap->pixmap());
+        templateMatcher.setRightImage(rightPixmap->pixmap());
     }
 }
 
@@ -95,18 +77,7 @@ void TemplateMatchingUI::mousePressEvent(QMouseEvent * event)
 {
     if (leftPixmap != NULL && rightPixmap != NULL)
     {
-        if (leftPatch != NULL)
-        {
-            graphicSceneLeftImage->removeItem(leftPatch);
-            leftPatch = NULL;
-        }
-
-        if (rightPatch != NULL)
-        {
-            graphicSceneRightImage->removeItem(rightPatch);
-            rightPatch = NULL;
-        }
-
+        removeRectItemsFromScene();
         std::size_t patchSize = ui->horizontalSliderPatchSize->value();
         QPointF selectedPoint = ui->graphicsViewLeftImage->mapToScene(event->pos());
         selectedPoint.setX(selectedPoint.x() - ui->graphicsViewLeftImage->geometry().x() - 1);
@@ -115,15 +86,15 @@ void TemplateMatchingUI::mousePressEvent(QMouseEvent * event)
         if (selectedPoint.x() >= 0 && selectedPoint.x() <= leftPixmap->pixmap().width() &&
                 selectedPoint.y() >= 0 && selectedPoint.y() <= rightPixmap->pixmap().height())
         {
-            qDebug() << "Selected Point: " << selectedPoint;
-            QPen redPen = QPen(Qt::red);
+            // qDebug() << "Selected Point: " << selectedPoint;
+            QPen bluePen = QPen(Qt::blue);
             QRect referenceRect(selectedPoint.x() - patchSize / 2, selectedPoint.y() - patchSize / 2, patchSize, patchSize);
-            leftPatch = graphicSceneLeftImage->addRect(referenceRect, redPen);
+            leftPatch = graphicSceneLeftImage->addRect(referenceRect, bluePen);
 
-            activeThread.setPatchSize(patchSize);
-            QPointF final = activeThread.findCorrespondingTemplate(selectedPoint);
+            templateMatcher.setPatchSize(patchSize);
+            QPointF final = templateMatcher.findCorrespondingTemplate(selectedPoint);
 
-            qDebug() << "Final Point: " << final;
+            // qDebug() << "Final Point: " << final;
             QPen greenPen = QPen(Qt::green);
             QRect followingRect(final.x(), final.y(), patchSize, patchSize);
             rightPatch = graphicSceneRightImage->addRect(followingRect, greenPen);
@@ -131,6 +102,21 @@ void TemplateMatchingUI::mousePressEvent(QMouseEvent * event)
     }
     else
     {
+        QMessageBox::warning(this, "Warning", "Please select images for the both sides");
+    }
+}
 
+void TemplateMatchingUI::removeRectItemsFromScene()
+{
+    if (leftPatch != NULL)
+    {
+        graphicSceneLeftImage->removeItem(leftPatch);
+        leftPatch = NULL;
+    }
+
+    if (rightPatch != NULL)
+    {
+        graphicSceneRightImage->removeItem(rightPatch);
+        rightPatch = NULL;
     }
 }

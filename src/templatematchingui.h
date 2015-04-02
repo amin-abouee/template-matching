@@ -34,13 +34,11 @@ private:
     QGraphicsView *graphicsViewRightImage;
     QGraphicsScene *graphicSceneLeftImage;
     QGraphicsScene *graphicSceneRightImage;
-    // QPixmap leftImage;
-    // QPixmap rightImage;
     QGraphicsPixmapItem *leftPixmap;
     QGraphicsPixmapItem *rightPixmap;
     QGraphicsRectItem *leftPatch;
     QGraphicsRectItem *rightPatch;
-    TemplateMatchingOpenCV activeThread; 
+    TemplateMatchingOpenCV templateMatcher; 
 };
 
 #endif // TEMPLATEMATCHINGUI_H
