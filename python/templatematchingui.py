@@ -86,6 +86,6 @@ class TemplateMatching(QtGui.QDialog):
  
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
-    templateMatchingapp = TemplateMatching()
-    templateMatchingapp.show()
+    templateMatchingApp = TemplateMatching()
+    templateMatchingApp.show()
     sys.exit(app.exec_())
