@@ -13,11 +13,11 @@ This method is useful when the images have the nearby viewpoint.
 * Cmake 3.0
 
 **Build and Run the C++:**
-1. mkdir build
-2. cd build
-3. cmake ..
-4. make 
-5. ./bin/release/template_matching
+1.  mkdir build
+2.  cd build
+3.  cmake ..
+4.  make 
+5.  ./bin/release/template_matching
 
 **ibraries for Python:**
 * Python 2.7.9
@@ -26,4 +26,4 @@ This method is useful when the images have the nearby viewpoint.
 * Numpy 1.9.2
 
 **Run the Python:**
-1. python python/templatematchingui.py
+1.  python python/templatematchingui.py
