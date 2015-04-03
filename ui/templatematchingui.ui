@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>TemplateMatchingUI</class>
- <widget class="QDialog" name="TemplateMatchingUI">
+ <class>TemplateMatching</class>
+ <widget class="QDialog" name="TemplateMatching">
   <property name="geometry">
    <rect>
     <x>0</x>

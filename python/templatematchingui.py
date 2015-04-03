@@ -1,86 +1,110 @@
-#!/usr/local/bin/python
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'ui/templatematchingui.ui'
-#
-# Created: Thu Apr  2 18:27:09 2015
-#      by: PyQt4 UI code generator 4.11.3
-#
-# WARNING! All changes made in this file will be lost!
-
+import sys
+import os
 from PyQt4 import QtCore, QtGui
+from form import Ui_TemplateMatching
+from templatematchingopencv import TemplateMatchingOpenCV
+ 
+ 
+class TemplateMatching(QtGui.QDialog):
+    def __init__(self):
+    	super(TemplateMatching, self).__init__()
+        self.ui = Ui_TemplateMatching()
+        self.ui.setupUi(self)
 
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    def _fromUtf8(s):
-        return s
+        self.graphicSceneLeftImage = QtGui.QGraphicsScene(self)
+        self.graphicSceneRightImage = QtGui.QGraphicsScene(self)
+        self.ui.graphicsViewLeftImage.setScene(self.graphicSceneLeftImage)
+        self.ui.graphicsViewRightImage.setScene(self.graphicSceneRightImage)
 
-try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
+        self.leftPixmap = QtGui.QGraphicsPixmapItem(None)
+        self.rightPixmap = QtGui.QGraphicsPixmapItem(None)
+        self.leftPatch = QtGui.QGraphicsRectItem(None)
+        self.rightPatch = QtGui.QGraphicsRectItem(None)
 
-class Ui_TemplateMatchingUI(object):
-    def setupUi(self, TemplateMatchingUI):
-        TemplateMatchingUI.setObjectName(_fromUtf8("TemplateMatchingUI"))
-        TemplateMatchingUI.resize(1244, 687)
-        self.graphicsViewLeftImage = QtGui.QGraphicsView(TemplateMatchingUI)
-        self.graphicsViewLeftImage.setGeometry(QtCore.QRect(10, 10, 600, 600))
-        self.graphicsViewLeftImage.setObjectName(_fromUtf8("graphicsViewLeftImage"))
-        self.graphicsViewRightImage = QtGui.QGraphicsView(TemplateMatchingUI)
-        self.graphicsViewRightImage.setGeometry(QtCore.QRect(630, 10, 600, 600))
-        self.graphicsViewRightImage.setObjectName(_fromUtf8("graphicsViewRightImage"))
-        self.pushButtonLeftImage = QtGui.QPushButton(TemplateMatchingUI)
-        self.pushButtonLeftImage.setGeometry(QtCore.QRect(230, 620, 170, 32))
-        self.pushButtonLeftImage.setObjectName(_fromUtf8("pushButtonLeftImage"))
-        self.pushButtonRightImage = QtGui.QPushButton(TemplateMatchingUI)
-        self.pushButtonRightImage.setGeometry(QtCore.QRect(880, 620, 170, 32))
-        self.pushButtonRightImage.setObjectName(_fromUtf8("pushButtonRightImage"))
-        self.layoutWidget = QtGui.QWidget(TemplateMatchingUI)
-        self.layoutWidget.setGeometry(QtCore.QRect(420, 660, 391, 26))
-        self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
-        self.horizontalLayout_2 = QtGui.QHBoxLayout(self.layoutWidget)
-        self.horizontalLayout_2.setMargin(0)
-        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        self.labelPatchSizeText = QtGui.QLabel(self.layoutWidget)
-        self.labelPatchSizeText.setObjectName(_fromUtf8("labelPatchSizeText"))
-        self.horizontalLayout_2.addWidget(self.labelPatchSizeText)
-        self.horizontalLayout = QtGui.QHBoxLayout()
-        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        self.horizontalSliderPatchSize = QtGui.QSlider(self.layoutWidget)
-        self.horizontalSliderPatchSize.setMinimum(10)
-        self.horizontalSliderPatchSize.setProperty("value", 20)
-        self.horizontalSliderPatchSize.setOrientation(QtCore.Qt.Horizontal)
-        self.horizontalSliderPatchSize.setObjectName(_fromUtf8("horizontalSliderPatchSize"))
-        self.horizontalLayout.addWidget(self.horizontalSliderPatchSize)
-        self.labelPatchSize = QtGui.QLabel(self.layoutWidget)
-        self.labelPatchSize.setObjectName(_fromUtf8("labelPatchSize"))
-        self.horizontalLayout.addWidget(self.labelPatchSize)
-        self.horizontalLayout_2.addLayout(self.horizontalLayout)
+        self.INITIALPATCHSIZE = 20
+        self.PADSIZEGRAPHICSCENE = 10
+        self.PADSIZEGRAPHICVIEW = 1
 
-        self.retranslateUi(TemplateMatchingUI)
-        QtCore.QMetaObject.connectSlotsByName(TemplateMatchingUI)
+        self.templateMatcher = TemplateMatchingOpenCV(self.INITIALPATCHSIZE)
 
-        self.
+        self.ui.pushButtonLeftImage.clicked.connect(self.handleButtonLeftImage)
+        self.ui.pushButtonRightImage.clicked.connect(self.handleButtonRightImage)
 
-    def retranslateUi(self, TemplateMatchingUI):
-        TemplateMatchingUI.setWindowTitle(_translate("TemplateMatchingUI", "Template Matching", None))
-        self.pushButtonLeftImage.setText(_translate("TemplateMatchingUI", "Load Left Image", None))
-        self.pushButtonRightImage.setText(_translate("TemplateMatchingUI", "Load Right Image", None))
-        self.labelPatchSizeText.setText(_translate("TemplateMatchingUI", "Patch Size", None))
-        self.labelPatchSize.setText(_translate("TemplateMatchingUI", "20", None))
+        self.connect(self.ui.horizontalSliderPatchSize, QtCore.SIGNAL("valueChanged(int)"),self.ui.labelPatchSize, QtCore.SLOT("setNum(int)"))
 
+        image = QtGui.QImage("/Users/Abouee/Workspace/C++/Template_Matching/input/IMG_4934.JPG")
+        szView = self.ui.graphicsViewLeftImage.size()
+        leftImage = QtGui.QPixmap.fromImage(image)
+        self.leftPixmap = self.graphicSceneLeftImage.addPixmap(leftImage.scaled(szView.width() - self.PADSIZEGRAPHICSCENE, szView.height() - self.PADSIZEGRAPHICSCENE, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation))
+        self.templateMatcher.setLeftImage(self.leftPixmap.pixmap().toImage())
 
+        image = QtGui.QImage("/Users/Abouee/Workspace/C++/Template_Matching/input/IMG_4936.JPG")
+        szView = self.ui.graphicsViewRightImage.size()
+        rightImage = QtGui.QPixmap.fromImage(image)
+        self.rightPixmap = self.graphicSceneRightImage.addPixmap(rightImage.scaled(szView.width() - self.PADSIZEGRAPHICSCENE, szView.height() - self.PADSIZEGRAPHICSCENE, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation))
+        self.templateMatcher.setRightImage(self.rightPixmap.pixmap().toImage())
+
+    def mousePressEvent(self, event):
+        if self.leftPixmap is not None and self.rightPixmap is not None:
+            self.removeRectItemsFromScene()
+            patchSize = self.ui.horizontalSliderPatchSize.value();
+            selectedPoint = self.ui.graphicsViewLeftImage.mapToScene(event.pos());
+            selectedPoint.setX(selectedPoint.x() - self.ui.graphicsViewLeftImage.geometry().x() - self.PADSIZEGRAPHICVIEW)
+            selectedPoint.setY(selectedPoint.y() - self.ui.graphicsViewLeftImage.geometry().y() - self.PADSIZEGRAPHICVIEW)
+            if selectedPoint.x() >= 0 and selectedPoint.x() <= self.leftPixmap.pixmap().width() and selectedPoint.y() >= 0 and selectedPoint.y() <= self.rightPixmap.pixmap().height():
+            # // draw a blue rectangle around the selected patch.
+                bluePen = QtGui.QPen(QtCore.Qt.blue);
+                referenceRect = QtCore.QRectF(selectedPoint.x() - patchSize / 2, selectedPoint.y() - patchSize / 2, patchSize, patchSize)
+                self.leftPatch = self.graphicSceneLeftImage.addRect(referenceRect, bluePen)
+
+                # // set the patch size and find the corresponding template (patch) in the following image
+                self.templateMatcher.setPatchSize(patchSize)
+                final = self.templateMatcher.findCorrespondingTemplate(selectedPoint)
+
+                # // draw a green rectangles around the computed patch in the right side
+                greenPen = QtGui.QPen(QtCore.Qt.green)
+                followingRect = QtCore.QRectF(final.x(), final.y(), patchSize, patchSize)
+                self.rightPatch = self.graphicSceneRightImage.addRect(followingRect, greenPen)
+
+    def handleButtonLeftImage(self):
+        self.graphicSceneLeftImage.clear()
+        self.leftPatch = None
+
+        fileName = QtGui.QFileDialog.getOpenFileName(self, 'Open file', QtCore.QDir.currentPath())
+        if os.path.exists(fileName):
+            image = QtGui.QImage(fileName)
+            szView = self.ui.graphicsViewLeftImage.size()
+            leftImage = QtGui.QPixmap.fromImage(image)
+            self.leftPixmap = self.graphicSceneLeftImage.addPixmap(leftImage.scaled(szView.width() - self.PADSIZEGRAPHICSCENE, szView.height() - self.PADSIZEGRAPHICSCENE, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation))
+            self.templateMatcher.setLeftImage(self.leftPixmap.pixmap().toImage())
+        else:
+            QtGui.QMessageBox.information(self, "Image Viewer", "Cannot Loaf File")
+
+    def handleButtonRightImage(self):
+        self.graphicSceneRightImage.clear()
+        self.rightPatch = None
+
+        fileName = QtGui.QFileDialog.getOpenFileName(self, 'Open file', QtCore.QDir.currentPath())
+        if os.path.exists(fileName):
+            image = QtGui.QImage(fileName)
+            szView = self.ui.graphicsViewRightImage.size()
+            rightImage = QtGui.QPixmap.fromImage(image)
+            self.rightPixmap = self.graphicSceneRightImage.addPixmap(rightImage.scaled(szView.width() - self.PADSIZEGRAPHICSCENE, szView.height() - self.PADSIZEGRAPHICSCENE, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation))
+            self.templateMatcher.setRightImage(self.rightPixmap.pixmap().toImage())
+        else:
+            QtGui.QMessageBox.information(self, "Image Viewer", "Cannot Loaf File")
+
+    def removeRectItemsFromScene(self):
+        if self.leftPatch is not None:
+            self.graphicSceneLeftImage.removeItem(self.leftPatch)
+            self.leftPatch = None
+
+        if self.rightPatch is not None:
+            self.graphicSceneRightImage.removeItem(self.rightPatch)
+            self.rightPatch = None
+ 
 if __name__ == "__main__":
-    import sys
     app = QtGui.QApplication(sys.argv)
-    TemplateMatchingUI = QtGui.QDialog()
-    ui = Ui_TemplateMatchingUI()
-    ui.setupUi(TemplateMatchingUI)
-    TemplateMatchingUI.show()
+    templateMatchingapp = TemplateMatching()
+    templateMatchingapp.show()
     sys.exit(app.exec_())
-
