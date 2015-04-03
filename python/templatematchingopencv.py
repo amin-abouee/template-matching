@@ -15,11 +15,9 @@ class TemplateMatchingOpenCV:
 
 	def setLeftImage(self, leftImage):
 		self.__leftImage = self.qImage2CvMat(leftImage)
-		# cv2.imshow("Left Image", self.__leftImage)
 
 	def setRightImage(self, rightImage):
 		self.__rightImage = self.qImage2CvMat(rightImage)
-		# cv2.imshow("Right Image", self.__rightImage)
 
 	def qImage2CvMat(self, image):
 		image = image.convertToFormat(4)
@@ -27,9 +25,9 @@ class TemplateMatchingOpenCV:
 		height = image.height()
 		ptr = image.bits()
 		ptr.setsize(image.byteCount())
-		arr = numpy.array(ptr).reshape(height, width, 4)  #  Copies the data
-		res = cv2.cvtColor (arr, cv2.COLOR_BGRA2BGR)
-		return res
+		arr = numpy.array(ptr).reshape(height, width, 4)
+		return cv2.cvtColor (arr, cv2.COLOR_BGRA2BGR)
+		
 
 	def findCorrespondingTemplate(self, selectedPoint):
 		centerPoint = numpy.array([selectedPoint.x(), selectedPoint.y()])
@@ -39,7 +37,6 @@ class TemplateMatchingOpenCV:
 		minVal, maxVal, minLoc, maxLoc = cv2.minMaxLoc(res)
 		bestLoc = maxLoc
 		return QtCore.QPointF(bestLoc[0] + upperLeftCorner[0], bestLoc[1] + upperLeftCorner[1])
-		# numpy.array([bestLoc[0] + upperLeftCorner[0], bestLoc[1] + upperLeftCorner[1]])
 
 
 	def selectPatchImage(self, referenceImage, centerPoint, margin):
@@ -49,15 +46,10 @@ class TemplateMatchingOpenCV:
 		upperLeftCorner = numpy.array([0,0])
 		upperLeftCorner[0] = leftSide
 		upperLeftCorner[1] = upSide
-
 		rows , cols = referenceImage.shape[:2]
 		rightSide = min(upperLeftCorner[0] + margin, cols)
 		downSide = min(upperLeftCorner[1] + margin, rows)
-
 		width = rightSide - upperLeftCorner[0]
 		height = downSide - upperLeftCorner[1]
-
 		followingimage = referenceImage[upSide:downSide, leftSide:rightSide]
 		return (followingimage, upperLeftCorner)
-
-

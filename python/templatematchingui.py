@@ -1,3 +1,4 @@
+#! /usr/local/bin/python
 import sys
 import os
 from PyQt4 import QtCore, QtGui
@@ -24,25 +25,10 @@ class TemplateMatching(QtGui.QDialog):
         self.INITIALPATCHSIZE = 20
         self.PADSIZEGRAPHICSCENE = 10
         self.PADSIZEGRAPHICVIEW = 1
-
         self.templateMatcher = TemplateMatchingOpenCV(self.INITIALPATCHSIZE)
-
         self.ui.pushButtonLeftImage.clicked.connect(self.handleButtonLeftImage)
         self.ui.pushButtonRightImage.clicked.connect(self.handleButtonRightImage)
-
         self.connect(self.ui.horizontalSliderPatchSize, QtCore.SIGNAL("valueChanged(int)"),self.ui.labelPatchSize, QtCore.SLOT("setNum(int)"))
-
-        image = QtGui.QImage("/Users/Abouee/Workspace/C++/Template_Matching/input/IMG_4934.JPG")
-        szView = self.ui.graphicsViewLeftImage.size()
-        leftImage = QtGui.QPixmap.fromImage(image)
-        self.leftPixmap = self.graphicSceneLeftImage.addPixmap(leftImage.scaled(szView.width() - self.PADSIZEGRAPHICSCENE, szView.height() - self.PADSIZEGRAPHICSCENE, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation))
-        self.templateMatcher.setLeftImage(self.leftPixmap.pixmap().toImage())
-
-        image = QtGui.QImage("/Users/Abouee/Workspace/C++/Template_Matching/input/IMG_4936.JPG")
-        szView = self.ui.graphicsViewRightImage.size()
-        rightImage = QtGui.QPixmap.fromImage(image)
-        self.rightPixmap = self.graphicSceneRightImage.addPixmap(rightImage.scaled(szView.width() - self.PADSIZEGRAPHICSCENE, szView.height() - self.PADSIZEGRAPHICSCENE, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation))
-        self.templateMatcher.setRightImage(self.rightPixmap.pixmap().toImage())
 
     def mousePressEvent(self, event):
         if self.leftPixmap is not None and self.rightPixmap is not None:
@@ -52,16 +38,11 @@ class TemplateMatching(QtGui.QDialog):
             selectedPoint.setX(selectedPoint.x() - self.ui.graphicsViewLeftImage.geometry().x() - self.PADSIZEGRAPHICVIEW)
             selectedPoint.setY(selectedPoint.y() - self.ui.graphicsViewLeftImage.geometry().y() - self.PADSIZEGRAPHICVIEW)
             if selectedPoint.x() >= 0 and selectedPoint.x() <= self.leftPixmap.pixmap().width() and selectedPoint.y() >= 0 and selectedPoint.y() <= self.rightPixmap.pixmap().height():
-            # // draw a blue rectangle around the selected patch.
                 bluePen = QtGui.QPen(QtCore.Qt.blue);
                 referenceRect = QtCore.QRectF(selectedPoint.x() - patchSize / 2, selectedPoint.y() - patchSize / 2, patchSize, patchSize)
                 self.leftPatch = self.graphicSceneLeftImage.addRect(referenceRect, bluePen)
-
-                # // set the patch size and find the corresponding template (patch) in the following image
                 self.templateMatcher.setPatchSize(patchSize)
                 final = self.templateMatcher.findCorrespondingTemplate(selectedPoint)
-
-                # // draw a green rectangles around the computed patch in the right side
                 greenPen = QtGui.QPen(QtCore.Qt.green)
                 followingRect = QtCore.QRectF(final.x(), final.y(), patchSize, patchSize)
                 self.rightPatch = self.graphicSceneRightImage.addRect(followingRect, greenPen)
