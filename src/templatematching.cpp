@@ -1,10 +1,10 @@
-#include "templatematchingui.h"
-#include "ui_templatematchingui.h"
+#include "templatematching.h"
+#include "ui_templatematching.h"
 
 
-TemplateMatchingUI::TemplateMatchingUI(QWidget *parent) :
+TemplateMatching::TemplateMatching(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::TemplateMatchingUI),
+    ui(new Ui::TemplateMatching),
     graphicSceneLeftImage(new QGraphicsScene(this)),
     graphicSceneRightImage(new QGraphicsScene(this)),
     leftPixmap(NULL),
@@ -27,12 +27,12 @@ TemplateMatchingUI::TemplateMatchingUI(QWidget *parent) :
     connect(ui->horizontalSliderPatchSize, SIGNAL(valueChanged(int)) , ui->labelPatchSize, SLOT(setNum(int)));
 }
 
-TemplateMatchingUI::~TemplateMatchingUI()
+TemplateMatching::~TemplateMatching()
 {
     delete ui;
 }
 
-void TemplateMatchingUI::on_pushButtonLeftImage_clicked()
+void TemplateMatching::on_pushButtonLeftImage_clicked()
 {
     // clear the left graphic scene and left patch indicator
     graphicSceneLeftImage->clear();
@@ -58,7 +58,7 @@ void TemplateMatchingUI::on_pushButtonLeftImage_clicked()
     }
 }
 
-void TemplateMatchingUI::on_pushButtonRightImage_clicked()
+void TemplateMatching::on_pushButtonRightImage_clicked()
 {
     graphicSceneRightImage->clear();
     rightPatch = NULL;
@@ -79,7 +79,7 @@ void TemplateMatchingUI::on_pushButtonRightImage_clicked()
     }
 }
 
-void TemplateMatchingUI::mousePressEvent(QMouseEvent * event)
+void TemplateMatching::mousePressEvent(QMouseEvent * event)
 {
     // check the both left and right images. Their values should be filled already by the image data
     if (leftPixmap != NULL && rightPixmap != NULL)
@@ -119,7 +119,7 @@ void TemplateMatchingUI::mousePressEvent(QMouseEvent * event)
     }
 }
 
-void TemplateMatchingUI::removeRectItemsFromScene()
+void TemplateMatching::removeRectItemsFromScene()
 {
     if (leftPatch != NULL)
     {

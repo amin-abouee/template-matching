@@ -8,15 +8,15 @@ find_package( Qt4 REQUIRED )
 
 set(template_matching_SOURCES
 	${PROJECT_SOURCE_DIR}/src/main.cpp
-	${PROJECT_SOURCE_DIR}/src/templatematchingui.cpp
+	${PROJECT_SOURCE_DIR}/src/templatematching.cpp
 	${PROJECT_SOURCE_DIR}/src/templatematchingopencv.cpp)
 
 set(template_matching_HEADERS 
-	${PROJECT_SOURCE_DIR}/src/templatematchingui.h 
+	${PROJECT_SOURCE_DIR}/src/templatematching.h 
 	${PROJECT_SOURCE_DIR}/src/templatematchingopencv.h)
 
 set(template_matching_FORMS 
-	${PROJECT_SOURCE_DIR}/ui/templatematchingui.ui)
+	${PROJECT_SOURCE_DIR}/ui/templatematching.ui)
 
 QT4_WRAP_CPP(template_matching_HEADERS_MOC ${template_matching_HEADERS})
 QT4_WRAP_UI(template_matching_FORMS_HEADERS ${template_matching_FORMS})

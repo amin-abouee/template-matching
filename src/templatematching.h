@@ -9,16 +9,16 @@
 #include "templatematchingopencv.h"
 
 namespace Ui {
-class TemplateMatchingUI;
+class TemplateMatching;
 }
 
-class TemplateMatchingUI : public QDialog
+class TemplateMatching : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit TemplateMatchingUI(QWidget *parent = 0);
-    ~TemplateMatchingUI();
+    explicit TemplateMatching(QWidget *parent = 0);
+    ~TemplateMatching();
 
 protected:
     /**
@@ -41,7 +41,7 @@ private slots:
     void on_pushButtonRightImage_clicked();
 
 private:
-    Ui::TemplateMatchingUI *ui;
+    Ui::TemplateMatching *ui;
     QGraphicsView *graphicsViewLeftImage; /**< Graphic view for loading the left image */
     QGraphicsView *graphicsViewRightImage; /**< Graphic view for loading the right image */
     QGraphicsScene *graphicSceneLeftImage; /**< Graphic scene for loading the left image */
@@ -61,4 +61,4 @@ private:
     void removeRectItemsFromScene();
 };
 
-#endif // TEMPLATEMATCHINGUI_H
+#endif // TEMPLATEMATCHING_H
